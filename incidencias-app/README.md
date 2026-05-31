@@ -54,5 +54,30 @@ Puedes iniciar sesión utilizando el usuario administrador generado de prueba:
 ## Tecnologías Utilizadas
 
 - **Frontend**: React (Vite), TailwindCSS, Recharts (Gráficos), Lucide React (Íconos), React Router, Axios. Diseño moderno oscuro con tarjetas y micro-animaciones.
-- **Backend**: Node.js, Express, Prisma ORM, JSON Web Tokens (JWT), Bcrypt.
-- **Base de Datos**: MySQL.
+- **Backend**: Spring Boot, Java 17, Spring Data JPA, JWT, Bcrypt.
+- **Base de Datos**: MySQL / MariaDB.
+
+## Ejecución de Pruebas (Unitarias e Integración)
+
+Para ejecutar las baterías de prueba del backend desarrolladas con **JUnit 5**, **Mockito** y **MockMvc**, colócate en la carpeta del backend y ejecuta el siguiente comando:
+
+```bash
+cd "/home/adrian/Escritorio/Trabajo BD empresa/incidencias-app/backend"
+./mvnw clean test
+```
+
+
+
+# Paso A: obtener token
+TOKEN=$(curl -s -X POST http://localhost:5000/api/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@empresa.com","password":"admin123"}' \
+  | python3 -c "import sys,json; print(json.load(sys.stdin)['token'])")
+
+echo "Token: $TOKEN"
+
+
+
+# Paso B: disparar el breakpoint
+curl -H "Authorization: Bearer $TOKEN" \
+  "http://localhost:5000/api/incidents?status=OPEN"

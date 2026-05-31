@@ -1,0 +1,23 @@
+# Documentación del Proyecto: Gestión de Incidencias
+
+El proyecto es una aplicación web full-stack compuesta por un frontend en React (con Vite y Tailwind CSS) y un backend en Spring Boot (con conexión a una base de datos MySQL/MariaDB a través de JPA). 
+
+A continuación se explican los distintos apartados y su forma de implementación:
+
+## 1. Apartado de Autenticación / Login
+- **Frontend (`Login.jsx`)**: Es la vista inicial de entrada a la aplicación. Consiste en un formulario donde el usuario introduce el email y contraseña.
+- **Backend (`AuthController.java` y `User.java`)**: Controlador encargado de autenticar al usuario. Toma las credenciales y las comprueba frente a la tabla de base de datos.
+- **Implementación**: Funciona basado en la búsqueda del usuario (modelo `User`). Un repositorio realiza el `findByEmail`, si existe y la contraseña es correcta, se le da paso.
+
+## 2. Apartado de Panel de Control (Dashboard)
+- **Frontend (`Dashboard.jsx`)**: Vista de métricas. El usuario, una vez logueado, ve aquí estadísticas relevantes del sistema, como totales de incidencias según su estado o prioridad.
+- **Backend (`DashboardController.java`)**: Controlador que sirve la información resumida a través de endpoints REST específicos que hacen recuentos en base de datos.
+- **Implementación**: Llama al repositorio de incidencias para calcular cuántas entradas hay bajo distintos estados ("ABIERTA", "CERRADA", etc.) y manda un JSON con los totales al frontend, el cual puede pintarlo en cuadros o gráficas.
+
+## 3. Apartado de Gestión de Incidencias (CRUD)
+- **Frontend (`Incidents.jsx`)**: Pantalla que muestra el listado completo de incidencias. Incluye formularios (modales o directos) para añadir nuevas, y botones de acciones en cada fila para Editar, Eliminar o Cambiar el Estado.
+- **Backend (`IncidentController.java` y `Incident.java`)**: Expone endpoints REST (`@GetMapping`, `@PostMapping`, `@PutMapping`, `@DeleteMapping`) recibidos por el `IncidentController`.
+- **Implementación**: Las entidades se guardan en la tabla `incidents` usando Spring Data JPA (a través del `IncidentRepository`). Se mapean campos importantes como Título, Descripción, Prioridad (LOW, MEDIUM, HIGH) y Estado (OPEN, IN_PROGRESS, CLOSED).
+
+## 4. Persistencia Temporal Automática
+- Ambos modelos (`Incident` y `User`) implementan auditorías de tiempo: un `createdAt` al instante de creación y un `updatedAt` gestionado automáticamente con `@PreUpdate` por el ciclo de vida de JPA.
